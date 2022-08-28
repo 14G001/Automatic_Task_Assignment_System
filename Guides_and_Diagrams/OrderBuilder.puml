@@ -1,0 +1,105 @@
+@startuml
+'https://plantuml.com/class-diagram
+class Order {
+    - ID:int
+    - clientID:int
+    - tasks:HashMap<Integer, Task>
+    - place:Place
+    + setID(OrderProcessingSystem):void
+    + addTask(Task):void
+    + getOrderWithIndividualTask(Task):Order
+    + isSimple():boolean
+}
+
+interface Builder{
+    + setCLientID(clientID:int)
+    + setID(OrderProcessingSystem):void
+    + addTask(Task):void
+    + addPlace(Place):void
+
+}
+
+class OrderBuilder implements Builder{
+- result:Order
+- clientID:int
+- tasks:HashMap<Integer, Task>
+- place:Place
++ getResult():Order
+}
+
+note left of OrderBuilder::getResult
+//after all properties are setted by Director
+
+return new Order(clientID, task, place);
+
+end note
+
+class Director{
+    -builder:Builder
+    +Director(builder)
+    +changeBuilder(builder)
+    +make(Form)
+}
+note left of Director::make
+builder.setClientID(form.getclientID)
+builder.setPlace(form.getPlace)
+if(clean){
+    Task c = new Clean()
+    if(
+        form.getLastCleaningDate() - Time.getCurrentDate() < 16
+        || !this.place.getSurfaceResidueTypes().contains(Residue.MUD)
+        || (this.place.getNumberOfPetsLiving() < 2)
+    ){
+        c.isComplex == false
+    } else {
+        c.isComplex == true
+    }
+    builder.addTask(c)
+}
+if(sort){
+builder.addTask(Task)
+}
+if(shine){
+ if(floor){
+    Task s = new Shine(0) //surfaceTypeID
+ }
+ if(furniture){
+    Task s = new Shine(1) //surfaceTypeID
+ }
+}
+if(repair){
+    Task e;
+    if(electrical){
+        e = new RepairElectricity(form.getElectricalComplexity())
+    }
+    if(gas){
+        e = new RepairGas(form.getGasComplexity())
+    }
+    builder.addTask(e)
+}
+
+end note
+
+class Form{
+clientID:int
+place:String
+clean:boolean
+lastCleaningDate:int
+residue:Residue
+pets:int
+sort:boolean
+shine:boolean
+floor:boolean
+furniture:boolean
+repair:boolean
+electrical:boolean
+electricalComplexity:int
+gas:boolean
+gasComplexity:int
+}
+
+Director --> Form
+Director --> Builder
+OrderBuilder --> Order
+
+@enduml

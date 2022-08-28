@@ -1,0 +1,95 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Strategy{
+    + proccessOrder(Order)
+    + validateOrder()
+    + assingTaskPerformer()
+    + getTheMostAppropiateTaskPerformer():TaskPerformer
+}
+
+note left of Strategy::proccessOrder
+validateOrder() //check if client is valid
+
+assingTaskPerformer(){
+    getTheMostAppropiateTaskPerformer()// logic changes
+                                       depending on customer membership
+}
+'Los Economic no deben estar morosos,
+
+end note
+
+class PlatinumStrategy implements Strategy{
+ + validateOrder()
+ + getTheMostAppropiateTaskPerformer():TaskPerformer
+'get the robot with the fewest pending orders
+
+}
+
+note left of PlatinumStrategy::validateOrder
+fee of what
+they pay monthly
+end note
+note left of PlatinumStrategy::getTheMostAppropiateTaskPerformer
+get the robot with the
+fewest pending orders
+end note
+
+class ClassicStrategy implements Strategy{
+ + validateOrder()
+ + getTheMostAppropiateTaskPerformer():TaskPerformer
+
+}
+note left of ClassicStrategy::validateOrder
+can owe up to $2000
+end note
+note left of ClassicStrategy::getTheMostAppropiateTaskPerformer
+get the cheapest robot
+end note
+
+
+class EconomicStrategy implements Strategy{
+ + validateOrder()
+ + getTheMostAppropiateTaskPerformer():TaskPerformer
+
+}
+note left of EconomicStrategy::validateOrder
+they should not
+be delinquent
+end note
+note left of EconomicStrategy::getTheMostAppropiateTaskPerformer
+get the cheapest robot
+end note
+
+
+
+
+
+
+
+class Enterprise {
+
+    - clients:ClientsDB
+    - clientsDebt:PaymentModule
+    - strategy:Strategy
+    - taskPerformers:TaskPerformerAssignmentSystem
+    - orderProcessingSystem:OrderProcessingSystem
+    + processOrder(Order):void
+    + setStrategy(Order):void
+}
+note left of Enterprise::setStrategy
+if(client == Platinum){
+    strategy = new PlatinumStrategy()
+}
+if(client == Classic){
+    strategy = new ClassicStrategy()
+}
+if(client == Economic){
+    strategy = new EconomicStrategy()
+}
+end note
+
+Enterprise *-- Strategy
+
+
+@enduml

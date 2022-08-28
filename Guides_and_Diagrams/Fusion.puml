@@ -1,0 +1,275 @@
+@startuml
+
+title LimpiaTek: Robot Assignment System
+
+
+Client <|-- Economic
+Client <|-- Classic
+Client <|-- Platinum
+
+Order *-- Task
+Order *-- Place
+Place *-- Residue
+
+Task <|-- Clean
+Task <|-- Shine
+Task <|-- Sort
+Shine *-- Surface
+
+Task <|-- Repair
+Repair <|-- RepairElectricity
+Repair <|-- RepairGas
+
+TaskPerformer <|-- Robot
+TaskPerformer <|-- Repairer
+TaskPerformer *- Order
+
+Robot <-- Configuration
+Robot <|-- RobotK311Yfl
+Robot <|-- RobotK311Yfu
+Robot <|-- RobotP011H
+Robot <|-- RobotK311Ya
+Robot <|-- RobotS031RTY
+
+Repairer <|-- RepairerElectricity
+Repairer <|-- RepairerGas
+
+
+Enterprise *-- OrderProcessingSystem
+Enterprise *-- TaskPerformerAssignmentSystem
+TaskPerformerAssignmentSystem *-- TaskPerformer
+Enterprise *-- ClientsDB
+Enterprise *-- PaymentModule
+ClientsDB *-- Client
+
+
+abstract Client {
+    - ID:int
+    - numberOfLimitedOrdersDoneThisMonth:int
+    - ordersMade:ArrayList<Order>
+    *=== abstract isMakingALimitedOrder(Order):boolean
+    *=== abstract isDebtor(double):boolean
+    + canMakeAnOrderWithThatTasksTypes(HashMap<Integer, Task>):boolean
+    + getTheMostAppropiateTaskPerformer(List<TaskPerformer>):TaskPerformer
+    + haveLimitedOrdersAvailable():boolean
+    + getCost():double
+    + addOrder(Order):void
+}
+class Platinum {
+    - monthlyFee:double
+}
+class Classic {
+}
+class Economic {
+}
+
+
+class Order {
+    - ID:int
+    - clientID:int
+    - tasks:HashMap<Integer, Task>
+    - place:Place
+    - cost:Double
+    + setID(OrderProcessingSystem):void
+    + addTask(Task):void
+    + getOrderWithIndividualTask(Task):Order
+    + isSimple():boolean
+    + getCost():Double
+}
+
+abstract Task {
+    *=== abstract getTypeID():int
+    *=== abstract hasTPTheFunctionality(TaskPerformer):boolean
+}
+class Clean {
+}
+class Shine {
+    -surfaceTypeID:int
+}
+class Sort {
+}
+abstract Repair {
+    '1 to 8'
+    -complexity:int
+    *=== abstract getPrice():double
+}
+class RepairGas {
+}
+class RepairElectricity {
+}
+
+enum Surface{
+    FLOOR
+    FURNITURE
+}
+
+class Place {
+    'ejs: San Martin 2408, Presidente Saul Hudson 4930, ...:'
+    - direction:String
+    'Contains surface residues types:'
+    - surfaceResidues:ArrayList<Integer>
+    'Number of pets:'
+    - numberOfPetsLiving:int
+    'Fecha de la ultima limpieza realizada por la empresa:'
+    'Deberia guardarse el place en una base de datos de la empresa para saber esto (HashMap de strings de placedir):'
+    - lastCleanByEnterpriseDate:int
+}
+
+enum Residue{
+    AnotherOneBitesTheDUST
+    PuddleOfMUDd
+}
+
+
+abstract TaskPerformer {
+    - pendingOrders:HashMap<Integer,Order>
+    + addOrder(Order):void
+    + getPendingOrders():HashMap<Integer, Order>
+    + getNumberOfPendingOrders():int
+    + containsOrder(int):boolean
+    *=== abstract hasTheFunctionality(int):boolean
+    *=== abstract getAvailableSurfaces():HashSet<Integer>
+    *=== abstract getPrice():double
+    *=== abstract getOrderPrice(Order):double
+
+}
+
+abstract Robot  {
+    - pricePerHour:double
+    - functions:HashSet<Integer>
+    - availableSurfaces:HashSet<Integer>
+    + hasTheFunctionality(int):boolean
+    + canPerformTask(Task):boolean
+}
+class RobotK311Yfl {
+}
+class RobotK311Yfu {
+}
+class RobotP011H {
+}
+class RobotK311Ya {
+}
+class RobotS031RTY {
+}
+
+abstract Repairer {
+    -salary:double
+}
+class RepairerElectricity {
+    + hasTheFunctionality(int):boolean
+}
+class RepairerGas {
+    + hasTheFunctionality(int):boolean
+}
+
+
+class Enterprise {
+    - clients:ClientsDB
+    - clientsDebt:PaymentModule
+    - taskPerformers:TaskPerformerAssignmentSystem
+    - orderProcessingSystem:OrderProcessingSystem
+    - administrator:Administration
+    + processOrder(Order):void
+}
+class OrderProcessingSystem {
+    + assignOrderID():int
+    + validateOrder(Order, Client, double, clientsDB):void
+}
+class TaskPerformerAssignmentSystem {
+    - taskPerformers:HashMap<Integer, TaskPerformer>
+    - lastCleanDates:HashMap<String, Integer>
+    - getTaskPerformersThatHaveTheFunctionality(Task):List<TaskPerformer>
+    + assignTaskPerformersForTheOrder(OrderProcessingSystem, Order, Client):double
+}
+class ClientsDB {
+}
+class PaymentModule {
+}
+
+'TP Part2 . . .
+
+class Configuration{
+-instance:Configuration
+-adjustmentFactor:float
++Configuration()
++getInstance():Configuration
+}
+
+
+class Form{
+clientID:int
+place:String
+clean:boolean
+lastCleaningDate:int
+residue:Residue
+pets:int
+sort:boolean
+shine:boolean
+floor:boolean
+furniture:boolean
+repair:boolean
+electrical:boolean
+electricalComplexity:int
+gas:boolean
+gasComplexity:int
+}
+
+'class OrderBuilder{
+'    -result:Order
+'    +makeOrder(Form):Order
+'}
+
+class Report{
+-objectID:String
+-totalCost:Double
++Report(ID:String, cost:Double)
++toString():String
+}
+
+class OrderDirector{
+    -builder:Builder
+    +Director(builder)
+    +changeBuilder(builder)
+    +make(Form)
+}
+
+interface OrdBuilder{
+    + setCLientID(clientID:int)
+    + setID(OrderProcessingSystem):void
+    + addTask(Task):void
+    + addPlace(Place):void
+}
+
+class OrderBuilder implements OrdBuilder{
+- result:Order
+- clientID:int
+- tasks:HashMap<Integer, Task>
+- place:Place
++ getResult():Order
+}
+
+class Administration{
+    -simpleCleaning:int
+    -complexCleaning:int
+    -clients:HashMap<integer,Client>
+    +Administration(clients)
+    +makeReport(clientID):Report
+    +makeGeneralReport():Report
+    +getCost(a:Affordable):Double
+    +getSimpleCleaningsVSComplexCleanings():String
+    '+updateCleaningsCounters(order:Order):void
+}
+
+interface Affordable{
+    +getCost():Double
+}
+
+OrderDirector --> Form
+OrderDirector --> OrdBuilder
+OrderProcessingSystem --> OrderBuilder
+Administration --> Report
+Administration *-- ClientsDB
+Client ..|> Affordable
+Order ..|> Affordable
+
+@enduml

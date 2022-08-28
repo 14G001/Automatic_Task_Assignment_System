@@ -1,0 +1,74 @@
+HERRAMIENTAS:
+Git
+GitLab
+Visual Studio Code
+Gitlens para VSCode
+
+
+VINCULARSE CON EL REPOSITORIO (SOLO HAY QUE USARLOS UNA VEZ):
+1) Abrimos una terminal de Git en la carpeta en la que queremos dejar los archivos del proyecto (conviene crear una probablemente)(con click derecho->Git Bash Here).
+2) git clone https://gitlab.com/14G001/LimpiaTek-Practical-Work.git
+<Ingresar credenciales de GitHub o GitLab dependiendo de donde te hayas traido el proyecto >>
+-------------------
+Para este paso tenemos que usar el comando "git clone <repo>" y ingresar nuestras credenciales; sin embargo muchas veces suele fallar.
+Si al ejecutarlo y despues de ingresar las credenciales indica: "remote: HTTP Basic: Access denied"; hay que intentar lo siguiente:
+	a) Cerrar la cuenta en GitHub y GitLab en el navegador y volver a intentar hacer el "git clone <repo>".
+	b) Cambiar la contrasena de GitLab para que no sea la misma que la de GitHub (ya que en caso de haberte logueado con las credenciales de GitHub esto puede causar este tipo de problemas). Una vez ingresadas las nuevas credenciales, ya deberia funcionar.
+3) Una vez hecho lo anterior, cerramos nuestra terminal de Git y abrimos una nueva dentro de la carpeta generada.
+Al hacerlo, veremos que al borde del mensaje de Git se encuentra un "(main)" o "(master)" o "(develop)"; ese sera el nombre de la rama en la que nos encontraremos en el momento (si cambiamos de rama dejara de decir eso para decir el nombre de la rama).
+Al abrir esta carpeta generada con Visual Studio Code; habiendo instalado previamente la extension GitLens, podremos ver el nombre de la rama en la que nos encontramos en la esquina izquierda inferior. Si cambiamos de rama en la terminal de Git, luego de clickear en el VSCode tambien se cambiara a la rama del Git.
+<Los siguientes comandos son necesarios para poder hacer cambios:>
+	git config --global user.email "TU_MAIL@gmail.com"
+	git config --global user.name "TU_NOMBRE_DE_USUARIO"
+<El siguiente comando es para que tengamos que volver a ingresar las credenciales la proxima vez que usemos Git:>
+	git config --global credential.helper store
+Configurado tod0 lo anterior; ya estaremos listos para trabajar con git usando comandos cotidianos; como lo son los siguientes:
+
+
+CREAR RAMA:
+git checkout develop
+git checkout -b <NOMBRE_DE_LA_RAMA>
+
+CAMBIAR DE RAMA:
+git checkout <NOMBRE_DE_LA_RAMA>
+
+AGREGAR CODIGO DE LA RAMA EN LA QUE ESTAMOS A LA RAMA PRINCIPAL (develop):
+git checkout develop
+git pull
+git checkout <NUESTRA_RAMA>
+git rebase develop
+<Resolucion de conflictos (convenientemente con Visual Studio Code)>
+git push --force
+<Se crea un Merge Request en GitLab>
+
+ACTUALIZAR CODIGO DE LA RAMA EN LA QUE ESTAMOS CON EL DE LA RAMA PRINCIPAL:
+git checkout develop
+git pull
+git checkout <NUESTRA_RAMA>
+git rebase develop
+<Resolucion de conflictos (convenientemente con Visual Studio Code)>
+git push --force
+
+HACER UNA PUBLICACION DEL CODIGO ACTUALIZADO EN LA RAMA PROPIA (COMMIT):
+git status
+git add .
+git commit
+<Se abre el editor de texto de Git (VIM); para escribir el texto del commit, una vez escrito el texto del mismo, se presiona ESC y despues se escribe ":wq" y se le da a ENTER>
+git push
+
+SUBIR VERSIONES DE CODIGO (COMMITS) REALIZADAS DE LA RAMA EN LA QUE ESTAS AL REPO:
+git push
+<(Si es el primer push que realizas en la rama va a tener que ser: "git push --set-upstream origin <NOMBRE_DE_LA_RAMA_A_SUBIR>")>
+
+
+
+CONFLICTO AL HACER REBASE (SI MODIFICAN LAS MISMAS LINEAS):
+if (noseque) {
+	<<if (nosequeotracosa) {>> <--- Modificado por otro
+		talcosa
+	<<}>> <--- Modificado por otro
+	talotra
+}
+
+
+PARA COMPARAR RAMAS Y RESOLVER CONFLICTOS DE FORMA MAS COMODA USAR LA TERMINAL DE GIT AL MISMO TIEMPO QUE VISUAL STUDIO CODEORMA MAS COMODA USAR LA TERMINAL DE GIT AL MISMO TIEMPO QUE VISUAL STUDIO CODE

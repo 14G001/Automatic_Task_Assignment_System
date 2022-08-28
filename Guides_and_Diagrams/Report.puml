@@ -1,0 +1,93 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Affordable{
+    +getCost():Double
+}
+
+'interface Reportable{
+'    makeReport()
+'}
+class Administration{
+    -simpleCleaning:int
+    -complexCleaning:int
+    -clientsDB:ClientsDB
+    +Administration(ClientsDB)
+    +makeReport(clientID):Report
+    +makeGeneralReport():Report
+    +getCost(a:Affordable):Double
+    +getSimpleCleaningsVSComplexCleanings():String
+    +updateCleaningsCounters(order:Order):void
+}
+
+note left of Administration::setClientDB
+clientsDB = super.clientsDB.getInstance()
+end note
+note left of Administration::makeGeneralReport
+float generalCost;
+generalCost = clientsDB.forEach((c : clients)-> c.getCost)
+return new Report(null, generalCost);
+end note
+note left of Administration::makeReport
+float clientCost;
+clientCost = clientsDB.clients.filter(c.getID() == clientID).getCost()
+return new Report(clientID, clientCost);
+end note
+
+class ClientsDB{
+
+}
+
+abstract class Client{
+    - ordersMade:HashMap<Integer,Order>
+    + getCost()
+}
+note left of Client::getCost
+Double cost = 0.0;
+for (Order value : ordersMade.values()) {
+            cost += value.getCost();
+    }
+return cost;}
+end note
+
+class Order implements Affordable{
+    -cost:float
+    +getCost()
+}
+note left of Order::getCost
+return this.cost
+end note
+
+class Report{
+-objectID:String
+-totalCost:Double
++Report(ID:String, cost:Double)
++toString():String
+}
+'interface Printable{
+'    +print(p:Printable);
+'}
+'class ReportPrinter implements Printable{
+'    +print(p:Printable);
+'}
+
+class Enterprise{
+    -administrator:Administration
+}
+Enterprise *-- Administration
+Administration -right-> Affordable
+Administration *-- ClientsDB
+Administration --> Report
+Client -->Order
+Client <|.. Affordable
+
+ClientsDB *-- Client
+
+'crear el package Report V
+'crear la clase admin V
+'hacer el constructor de admin pasandole la clientDB
+'hacer que client y order implnten Affordable V
+'crear el listado de ordenes en client V
+'pasarle la orden una vez confirmada V
+
+@enduml
